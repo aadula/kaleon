@@ -545,9 +545,26 @@ h1 {
 .signup-form button:hover {
   transform: translateY(-2px);
   box-shadow: 0 18px 32px rgba(91, 174, 173, 0.28);
-  background: linear-gradient(135deg, #b7f8f4, #6dc3c0);
+  background: linear-gradient(135deg, #1c1885, #6dc3c0);
+}
+.demo-btn {
+  border: 1px solid rgba(152, 229, 224, 0.2);
+  border-radius: 999px;
+  font: inherit;
+  min-height: 58px;
+  padding: 0 1.45rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #031018;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+.demo-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px rgba(91, 174, 173, 0.28);
+  background: linear-gradient(135deg, #b7f8f4, #3416ad);
+}
 .sr-only {
   position: absolute;
   width: 1px;
