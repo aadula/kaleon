@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kaleon Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <div class="ambient ambient-three"></div>
+    <div class="grain"></div>
+
+    <main class="page-shell">
+      <section class="panel hero-panel reveal" id="home">
+        <div class="panel-frame hero-frame">
+          <div class="hero-backdrop" aria-hidden="true">
+            <div class="hero-stars"></div>
+            <div class="hero-city city-left"></div>
+            <div class="hero-city city-right"></div>
+            <div class="hero-floor"></div>
+            <div class="hero-horizon"></div>
+          </div>
+
+          <div class="eyebrow">Student support platform</div>
+
+          <div class="hero-copy">
+            <p class="brand-mark">Kaleon</p>
+            <h1>Student life made easy.</h1>
+            <p class="hero-text">
+              A clean, modern campus companion that helps students stay
+              organized, connected, and one step ahead.
+            </p>
+          </div>
+
+          <div class="feature-pills">
+            <span>Fast access</span>
+            <span>Simple routines</span>
+            <span>Built for momentum</span>
+          </div>
+
+          <div class="hero-sigil tilt-card" aria-hidden="true">
+            <div class="sigil-ring ring-one"></div>
+            <div class="sigil-ring ring-two"></div>
+            <div class="sigil-axis"></div>
+            <div class="sigil-node node-one"></div>
+            <div class="sigil-node node-two"></div>
+            <div class="sigil-node node-three"></div>
+            <div class="sigil-node node-four"></div>
+            <div class="sigil-node node-five"></div>
+            <div class="sigil-k">K</div>
+          </div>
+
+          <a class="scroll-cue" href="#mission" aria-label="Scroll to mission section">
+            <span></span>
+            <span></span>
+            <span></span>
+          </a>
+        </div>
+      </section>
+
+      <section class="panel mission-panel reveal" id="mission">
+        <div class="panel-frame mission-frame">
+          <div class="section-intro">
+            <p class="brand-mini">Kaleon</p>
+            <h2>There’s a smarter way to navigate college.</h2>
+          </div>
+
+          <div class="mission-card tilt-card">
+            <div class="mission-scan" aria-hidden="true"></div>
+            <p>
+              Not just choosing a major, but understanding every path it opens,
+              every step it takes, and every outcome it leads to.
+            </p>
+          </div>
+
+          <div class="cta-block">
+            <p class="build-note">We’re building it now.</p>
+            <p class="join-note">Join early.</p>
+
+            <form class="signup-form">
+              <label class="sr-only" for="email">Email address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+              />
+              <button type="submit">Sign up</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
