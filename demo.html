@@ -11,6 +11,137 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      .demo-shell {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: clamp(1.25rem, 3vw, 2rem);
+      }
+
+      .demo-card {
+        width: min(860px, 100%);
+        border-radius: 1.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: linear-gradient(
+          145deg,
+          rgba(9, 12, 24, 0.88),
+          rgba(17, 25, 44, 0.82)
+        );
+        backdrop-filter: blur(16px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        padding: clamp(1.25rem, 2.3vw, 2rem);
+      }
+
+      .demo-brand {
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        color: rgba(183, 207, 255, 0.85);
+        margin: 0 0 0.9rem;
+      }
+
+      .demo-heading {
+        margin: 0;
+        font-size: clamp(1.25rem, 2.3vw, 1.85rem);
+        color: #f5f8ff;
+      }
+
+      .demo-sub {
+        margin: 0.55rem 0 0;
+        color: rgba(225, 234, 255, 0.8);
+        max-width: 62ch;
+      }
+
+      .choice-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1.1rem;
+      }
+
+      .choice-btn {
+        border: 1px solid rgba(163, 186, 255, 0.36);
+        border-radius: 999px;
+        background: rgba(90, 120, 255, 0.14);
+        color: #f7f9ff;
+        padding: 0.58rem 1rem;
+        font: 600 0.95rem "Space Grotesk", sans-serif;
+        cursor: pointer;
+        transition: transform 120ms ease, background 120ms ease,
+          border-color 120ms ease;
+      }
+
+      .choice-btn:hover {
+        transform: translateY(-1px);
+        background: rgba(112, 138, 255, 0.23);
+        border-color: rgba(186, 204, 255, 0.7);
+      }
+
+      .choice-btn:focus-visible {
+        outline: 2px solid rgba(206, 220, 255, 0.95);
+        outline-offset: 2px;
+      }
+
+      .step {
+        display: none;
+      }
+
+      .step.active {
+        display: block;
+      }
+
+      .intro-message {
+        min-height: 160px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        animation: introFade 5s ease-in-out forwards;
+      }
+
+      @keyframes introFade {
+        0% {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        14%,
+        76% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+      }
+
+      .question-block + .question-block {
+        margin-top: 1.1rem;
+        padding-top: 1.1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .question-label {
+        margin: 0;
+        font-size: 0.98rem;
+        color: rgba(236, 241, 255, 0.9);
+      }
+
+      .progress-note {
+        margin-top: 1rem;
+        color: #97f2bf;
+        font-weight: 600;
+      }
+
+      .placeholder-box {
+        margin-top: 0.8rem;
+        border: 1px dashed rgba(166, 188, 255, 0.55);
+        border-radius: 0.85rem;
+        padding: 0.9rem;
+        color: rgba(212, 224, 255, 0.8);
+        font-size: 0.94rem;
+      }
+    </style>
   </head>
   <body>
     <div class="ambient ambient-one"></div>
@@ -18,80 +149,105 @@
     <div class="ambient ambient-three"></div>
     <div class="grain"></div>
 
-    <main class="page-shell">
-      <section class="panel hero-panel reveal" id="home">
-        <div class="panel-frame hero-frame">
-          <div class="hero-backdrop" aria-hidden="true">
-            <div class="hero-stars"></div>
-            <div class="hero-city city-left"></div>
-            <div class="hero-city city-right"></div>
-            <div class="hero-floor"></div>
-            <div class="hero-horizon"></div>
+    <main class="demo-shell">
+      <section class="demo-card" aria-live="polite">
+        <div class="step active" id="intro-step">
+          <div class="intro-message">
+            <h1 class="demo-heading">Lets start by asking you a few questions</h1>
           </div>
-
-          <div class="eyebrow">Student support platform</div>
-
-          <div class="hero-copy">
-            <p class="brand-mark">Kaleon</p>
-            <h1>Student life made easy.</h1>
-            <p class="hero-text">
-              A clean, modern campus companion that helps students stay
-              organized, connected, and one step ahead.
-            </p>
-          </div>
-
-          <div class="feature-pills">
-            <span>Fast access</span>
-            <span>Simple routines</span>
-            <span>Built for momentum</span>
-          </div>
-
-        
-
-          <a class="scroll-cue" href="#mission" aria-label="Scroll to mission section">
-            <span></span>
-            <span></span>
-            <span></span>
-          </a>
         </div>
-      </section>
 
-      <section class="panel mission-panel reveal" id="mission">
-        <div class="panel-frame mission-frame">
-          <div class="section-intro">
-            <p class="brand-mini">Kaleon</p>
-            <h2>There's a smarter way to navigate college.</h2>
+        <div class="step" id="role-step">
+          <p class="demo-brand">Kaleon demo</p>
+          <h2 class="demo-heading">I am a...</h2>
+          <p class="demo-sub">Pick your role to begin the guided path.</p>
+          <div class="choice-row">
+            <button class="choice-btn" id="student-btn" type="button">
+              Student
+            </button>
+            <button class="choice-btn" id="staff-btn" type="button">
+              Staff / Admin
+            </button>
+          </div>
+        </div>
+
+        <div class="step" id="student-step">
+          <p class="demo-brand">Student path</p>
+          <h2 class="demo-heading">Tell us where you are in your journey.</h2>
+          <p class="demo-sub">
+            We will use this to personalize your plan and readiness flow.
+          </p>
+
+          <div class="question-block">
+            <p class="question-label">What year are you in?</p>
+            <div class="choice-row">
+              <button class="choice-btn" type="button">1st year</button>
+              <button class="choice-btn" type="button">2nd year</button>
+              <button class="choice-btn" type="button">3rd year</button>
+              <button class="choice-btn" type="button">4th+ year</button>
+            </div>
           </div>
 
-          <div class="mission-card tilt-card">
-            <div class="mission-scan" aria-hidden="true"></div>
-            <p>
-              Not just choosing a major, but understanding every path it opens,
-              every step it takes, and every outcome it leads to.
-            </p>
+          <div class="question-block">
+            <p class="question-label">Are you a transfer student?</p>
+            <div class="choice-row">
+              <button class="choice-btn" type="button">Yes</button>
+              <button class="choice-btn" type="button">No</button>
+            </div>
           </div>
 
-          <div class="cta-block">
-            <p class="build-note">We're building it now.</p>
-            <p class="join-note">Join early.</p>
+          <div class="question-block">
+            <p class="question-label">Do you know what you are doing?</p>
+            <div class="choice-row">
+              <button class="choice-btn" type="button" id="ready-yes">Yes</button>
+              <button class="choice-btn" type="button" id="ready-no">No</button>
+            </div>
+            <p class="progress-note" id="readiness-output"></p>
+          </div>
 
-            <form class="signup-form">
-              <label class="sr-only" for="email">Email address</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                autocomplete="email"
-              />
-              <button type="submit">Sign up</button>
-            </form>
-            <button class="demo-btn" type="button">Demo</button>
+          <div class="question-block">
+            <p class="question-label">Kind of...</p>
+            <div class="placeholder-box">
+              Placeholder left blank for now.
+            </div>
           </div>
         </div>
       </section>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+      const introStep = document.getElementById("intro-step");
+      const roleStep = document.getElementById("role-step");
+      const studentStep = document.getElementById("student-step");
+      const studentBtn = document.getElementById("student-btn");
+      const staffBtn = document.getElementById("staff-btn");
+      const readyYes = document.getElementById("ready-yes");
+      const readyNo = document.getElementById("ready-no");
+      const readinessOutput = document.getElementById("readiness-output");
+
+      window.setTimeout(() => {
+        introStep.classList.remove("active");
+        roleStep.classList.add("active");
+      }, 5000);
+
+      studentBtn.addEventListener("click", () => {
+        roleStep.classList.remove("active");
+        studentStep.classList.add("active");
+      });
+
+      staffBtn.addEventListener("click", () => {
+        readinessOutput.textContent = "";
+        window.alert("Staff/Admin flow is coming next. Please continue as Student for now.");
+      });
+
+      readyYes.addEventListener("click", () => {
+        readinessOutput.textContent = "Readiness score: ready, skip to transfer optimizer.";
+      });
+
+      readyNo.addEventListener("click", () => {
+        readinessOutput.textContent =
+          "Readiness score: assess this, then use existing coursework inputs.";
+      });
+    </script>
   </body>
 </html>
