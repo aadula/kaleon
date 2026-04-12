@@ -109,15 +109,13 @@ See every option before you commit.
                 btn.disabled = true;
                 btn.innerText = 'Submitting...';
 
-                fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                fetch(scriptURL, { method: 'POST', body: new FormData(form) })
                   .then(response => {
-                    alert('Success! You are signed up. Stay tuned');
-                    form.reset();
+                    if (!response.ok) throw new Error('Request failed');
+                    window.location.href = 'welcome.html';
                   })
-                  .catch(error => {
-                    alert('Error!', error.message);
-                  })
-                  .finally(() => {
+                  .catch(() => {
+                    alert('Something went wrong. Please try again.');
                     btn.disabled = false;
                     btn.innerText = 'Sign up';
                   });

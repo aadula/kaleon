@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>You’re in — Kaleon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .welcome-frame {
+        width: min(560px, 100%);
+        text-align: center;
+        display: grid;
+        gap: clamp(1.25rem, 3vw, 1.75rem);
+        justify-items: center;
+        padding-block: clamp(2rem, 5vw, 3rem);
+      }
+
+      .welcome-frame h1 {
+        max-width: none;
+        margin: 0;
+      }
+
+      .welcome-body {
+        margin: 0;
+        max-width: 38ch;
+        color: var(--muted);
+        font-size: clamp(1rem, 2.1vw, 1.12rem);
+        line-height: 1.75;
+      }
+
+      .welcome-footer {
+        margin: 0.5rem 0 0;
+        font-size: 0.92rem;
+        letter-spacing: 0.06em;
+        color: var(--muted-soft);
+      }
+
+      .welcome-back {
+        margin-top: 0.25rem;
+        font-size: 0.85rem;
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: color 0.25s ease, border-color 0.25s ease;
+      }
+
+      .welcome-back:hover,
+      .welcome-back:focus-visible {
+        color: var(--primary);
+        border-bottom-color: rgba(152, 229, 224, 0.35);
+        outline: none;
+      }
+
+      @keyframes welcomeEase {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .welcome-in {
+        opacity: 0;
+        animation: welcomeEase 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      .welcome-in--1 {
+        animation-delay: 0.08s;
+      }
+      .welcome-in--2 {
+        animation-delay: 0.22s;
+      }
+      .welcome-in--3 {
+        animation-delay: 0.38s;
+      }
+      .welcome-in--4 {
+        animation-delay: 0.52s;
+      }
+      .welcome-in--5 {
+        animation-delay: 0.66s;
+      }
+      .welcome-in--6 {
+        animation-delay: 0.78s;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .welcome-in {
+          animation: none;
+          opacity: 1;
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <div class="ambient ambient-three"></div>
+    <div class="grain"></div>
+
+    <main class="page-shell">
+      <section class="panel">
+        <div class="panel-frame welcome-frame">
+          <p class="brand-mini welcome-in welcome-in--1">Kaleon</p>
+          <h1 class="welcome-in welcome-in--2">You’re in.</h1>
+          <p class="welcome-body welcome-in welcome-in--3">
+            Welcome to the Kaleon Pathfinders—our founding group of students shaping how college is
+            navigated.
+          </p>
+          <p class="welcome-body welcome-in welcome-in--4">
+            Early access is coming soon. Your input will help define what we build next.
+          </p>
+          <p class="welcome-footer welcome-in welcome-in--5">Keep an eye on your inbox.</p>
+          <a class="welcome-back welcome-in welcome-in--6" href="index.html">Back to home</a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
