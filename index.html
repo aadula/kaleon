@@ -20,7 +20,7 @@
 
     <main class="page-shell">
       <section class="panel hero-panel reveal" id="home">
-        <div class="panel-frame hero-frame">
+        <div class="panel-frame hero-frame" >
           <div class="hero-backdrop" aria-hidden="true">
             <div class="hero-stars"></div>
             <div class="hero-city city-left"></div>
@@ -45,17 +45,18 @@
             <span>Simple routines</span>
             <span>Built for momentum</span>
           </div>
-
-          <div class="hero-sigil tilt-card" aria-hidden="true">
-            <div class="sigil-ring ring-one"></div>
-            <div class="sigil-ring ring-two"></div>
-            <div class="sigil-axis"></div>
-            <div class="sigil-node node-one"></div>
-            <div class="sigil-node node-two"></div>
-            <div class="sigil-node node-three"></div>
-            <div class="sigil-node node-four"></div>
-            <div class="sigil-node node-five"></div>
-            <img style = "width: 60%; height: 60%;" src="IMG_6483(1).png">
+          <div class="hero-sigil-wrapper">
+            <div class="hero-sigil tilt-card" aria-hidden="true">
+              <div class="sigil-ring ring-one"></div>
+              <div class="sigil-ring ring-two"></div>
+              <div class="sigil-axis"></div>
+              <div class="sigil-node node-one"></div>
+              <div class="sigil-node node-two"></div>
+              <div class="sigil-node node-three"></div>
+              <div class="sigil-node node-four"></div>
+              <div class="sigil-node node-five"></div>
+              <img style = "width: 60%; height: 60%;" src="IMG_6483(1).png">
+            </div>
           </div>
 
           <a class="scroll-cue" href="#mission" aria-label="Scroll to mission section">
@@ -67,23 +68,23 @@
       </section>
 
       <section class="panel mission-panel reveal" id="mission">
-        <div class="panel-frame mission-frame">
+        <div class="panel-frame mission-frame" style = "align-items: center;">
           <div class="section-intro">
             <p class="brand-mini">Kaleon</p>
-            <h2>There's a smarter way to navigate college.</h2>
+            <h2 style="align-items: center;">There's a smarter way to navigate college.</h2>
           </div>
 
           <div class="mission-card tilt-card">
             <div class="mission-scan" aria-hidden="true"></div>
             <p>
-              Not just choosing a major, but understanding every path it opens,
-              every step it takes, and every outcome it leads to.
+              Most students figure it out too late.<br>
+See every option before you commit.
             </p>
           </div>
 
           <div class="cta-block">
-            <p class="build-note">We're building it now.</p>
-            <p class="join-note">Join early.</p>
+            <p class="join-note">Limited spots available!</p>
+            <p class="join-note"><b>Join early.</b></p>
 
             <form class="signup-form">
               <label class="sr-only" for="email">Email address</label>
@@ -96,7 +97,7 @@
               />
               <button type="submit">Sign up</button>
             </form>
-            <a href="demo.html" class="demo-btn">Try Our Demo</a>
+          
           </div>
         </div>
       </section>

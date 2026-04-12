@@ -132,6 +132,7 @@ body {
 .cta-block {
   position: relative;
   z-index: 1;
+  margin: 20px;
 }
 
 .hero-backdrop {
@@ -227,7 +228,7 @@ body {
     linear-gradient(180deg, transparent, rgba(152, 229, 224, 0.08)),
     repeating-linear-gradient(90deg, rgba(152, 229, 224, 0.08), rgba(152, 229, 224, 0.08) 1px, transparent 1px, transparent 42px),
     repeating-linear-gradient(180deg, rgba(152, 229, 224, 0.08), rgba(152, 229, 224, 0.08) 1px, transparent 1px, transparent 28px);
-  transform: perspective(900px) rotateX(72deg);
+  transform: perspective(100px) rotateX(72deg);
   transform-origin: center top;
   opacity: 0.38;
 }
@@ -241,7 +242,12 @@ body {
   background: linear-gradient(90deg, transparent, rgba(152, 229, 224, 0.95), transparent);
   box-shadow: 0 0 22px rgba(152, 229, 224, 0.9), 0 0 42px rgba(91, 174, 173, 0.38);
 }
-
+.hero-sigil-wrapper {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-20%);
+  right: clamp(1.5rem, 6vw, 3.8rem);
+}
 .hero-horizon::before,
 .hero-horizon::after {
   content: "";
@@ -251,7 +257,7 @@ body {
   height: 14px;
   border-radius: 50%;
   background: rgba(214, 251, 247, 0.95);
-  transform: translateY(-50%);
+
   box-shadow: 0 0 20px rgba(152, 229, 224, 0.9), 0 0 40px rgba(152, 229, 224, 0.35);
 }
 
@@ -440,15 +446,26 @@ h1 {
 }
 
 .mission-frame {
-  min-height: min(78vh, 700px);
-  display: grid;
-  align-content: center;
-  gap: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center; /* This centers it vertically if the section is full-height */
+  text-align: center;
+  width: 100%;
 }
+
+
+/* Ensure the form elements stay centered too */
+.signup-form {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
 
 .section-intro h2 {
   margin: 0.35rem 0 0;
-  max-width: 14ch;
+  max-width: 29ch;
   font-size: clamp(2rem, 4.5vw, 3.8rem);
 }
 
