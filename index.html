@@ -86,7 +86,7 @@ See every option before you commit.
             <p class="join-note">Limited spots available!</p>
             <p class="join-note"><b>Join early.</b></p>
 
-            <form class="signup-form">
+            <form class="signup-form" id="email-form">
               <label class="sr-only" for="email">Email address</label>
               <input
                 id="email"
@@ -94,9 +94,36 @@ See every option before you commit.
                 type="email"
                 placeholder="Enter your email"
                 autocomplete="email"
+                required
               />
-              <button type="submit">Sign up</button>
+              <button type="submit" id="submit-btn">Sign up</button>
             </form>
+
+            <script>
+              const scriptURL = 'https://script.google.com/macros/s/AKfycbwXHe7CU2AWZJ16xdZ97CA__APS3KufFfeknS6PUqPN_gC_MN_a_4SrVkE2Y4t05k2v/exec';
+              const form = document.querySelector('#email-form');
+              const btn = document.querySelector('#submit-btn');
+
+              form.addEventListener('submit', e => {
+                e.preventDefault();
+                btn.disabled = true;
+                btn.innerText = 'Submitting...';
+
+                fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                  .then(response => {
+                    alert('Success! You are signed up. Stay tuned');
+                    form.reset();
+                  })
+                  .catch(error => {
+                    alert('Error!', error.message);
+                  })
+                  .finally(() => {
+                    btn.disabled = false;
+                    btn.innerText = 'Sign up';
+                  });
+              });
+            </script>
+
           
           </div>
         </div>
