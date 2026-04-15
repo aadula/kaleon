@@ -9,6 +9,7 @@ const revealObserver = new IntersectionObserver(
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
       }
     });
   },
@@ -19,6 +20,24 @@ const revealObserver = new IntersectionObserver(
 
 const missionPanel = document.querySelector('.mission-panel');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const createPointerAnimator = (callback) => {
+  let frameId = null;
+  let latestEvent = null;
+
+  return (event) => {
+    latestEvent = event;
+
+    if (frameId !== null) {
+      return;
+    }
+
+    frameId = window.requestAnimationFrame(() => {
+      frameId = null;
+      callback(latestEvent);
+    });
+  };
+};
 
 const runMissionSequence = () => {
   if (!missionPanel || missionPanel.dataset.sequenceStarted === 'true') {
@@ -50,6 +69,7 @@ if (missionPanel) {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           runMissionSequence();
+          missionSequenceObserver.disconnect();
         }
       });
     },
@@ -62,22 +82,22 @@ if (missionPanel) {
 }
 
 tiltCards.forEach((card) => {
-  card.addEventListener('mousemove', (event) => {
+  card.addEventListener('mousemove', createPointerAnimator((event) => {
     const rect = card.getBoundingClientRect();
     const offsetX = (event.clientX - rect.left) / rect.width - 0.5;
     const offsetY = (event.clientY - rect.top) / rect.height - 0.5;
     const isMissionCard = Boolean(card.closest('.mission-panel'));
-    const rotateScale = isMissionCard ? 4.5 : 8;
-    const lift = isMissionCard ? -2 : -4;
+    const rotateScale = isMissionCard ? 2.8 : 5.2;
+    const lift = isMissionCard ? -1 : -2;
     const rotateY = offsetX * rotateScale;
     const rotateX = offsetY * -rotateScale;
     const shadow = isMissionCard
-      ? '0 24px 52px rgba(91, 174, 173, 0.16)'
-      : '0 32px 72px rgba(91, 174, 173, 0.22)';
+      ? '0 14px 28px rgba(91, 174, 173, 0.1)'
+      : '0 18px 38px rgba(91, 174, 173, 0.14)';
 
     card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${lift}px)`;
     card.style.boxShadow = shadow;
-  });
+  }));
 
   card.addEventListener('mouseleave', () => {
     card.style.transform = '';
@@ -86,7 +106,7 @@ tiltCards.forEach((card) => {
 });
 
 if (missionFrame && window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion) {
-  missionFrame.addEventListener('pointermove', (event) => {
+  missionFrame.addEventListener('pointermove', createPointerAnimator((event) => {
     const rect = missionFrame.getBoundingClientRect();
     const relativeX = ((event.clientX - rect.left) / rect.width) * 100;
     const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
@@ -95,11 +115,11 @@ if (missionFrame && window.matchMedia('(hover: hover) and (pointer: fine)').matc
 
     missionFrame.style.setProperty('--mission-x', `${relativeX}%`);
     missionFrame.style.setProperty('--mission-y', `${relativeY}%`);
-    missionFrame.style.setProperty('--mission-parallax-x', `${offsetX * 8}px`);
-    missionFrame.style.setProperty('--mission-parallax-y', `${offsetY * 8}px`);
-    missionFrame.style.setProperty('--mission-parallax-bg-x', `${offsetX * 3.5}px`);
-    missionFrame.style.setProperty('--mission-parallax-bg-y', `${offsetY * 3.5}px`);
-  });
+    missionFrame.style.setProperty('--mission-parallax-x', `${offsetX * 3.5}px`);
+    missionFrame.style.setProperty('--mission-parallax-y', `${offsetY * 3.5}px`);
+    missionFrame.style.setProperty('--mission-parallax-bg-x', `${offsetX * 1.2}px`);
+    missionFrame.style.setProperty('--mission-parallax-bg-y', `${offsetY * 1.2}px`);
+  }));
 
   missionFrame.addEventListener('pointerleave', () => {
     missionFrame.style.setProperty('--mission-x', '50%');
@@ -111,8 +131,8 @@ if (missionFrame && window.matchMedia('(hover: hover) and (pointer: fine)').matc
   });
 }
 
-if (heroFrame && heroSigil) {
-  heroFrame.addEventListener('pointermove', (event) => {
+if (heroFrame && heroSigil && window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion) {
+  heroFrame.addEventListener('pointermove', createPointerAnimator((event) => {
     const rect = heroFrame.getBoundingClientRect();
     const relativeX = ((event.clientX - rect.left) / rect.width) * 100;
     const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
@@ -121,8 +141,8 @@ if (heroFrame && heroSigil) {
 
     heroFrame.style.setProperty('--pointer-x', `${relativeX}%`);
     heroFrame.style.setProperty('--pointer-y', `${relativeY}%`);
-    heroSigil.style.transform = `translateY(-50%) translate(${offsetX * 14}px, ${offsetY * 14}px)`;
-  });
+    heroSigil.style.transform = `translateY(-50%) translate(${offsetX * 6}px, ${offsetY * 6}px)`;
+  }));
 
   heroFrame.addEventListener('pointerleave', () => {
     heroFrame.style.setProperty('--pointer-x', '50%');
