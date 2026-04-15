@@ -68,61 +68,99 @@
       </section>
 
       <section class="panel mission-panel reveal" id="mission">
-        <div class="panel-frame mission-frame" style = "align-items: center;">
-          <div class="section-intro">
-            <p class="brand-mini">Kaleon</p>
-            <h2 style="align-items: center;">There's a smarter way to navigate college.</h2>
+        <div class="panel-frame mission-frame">
+          <div class="mission-atmosphere" aria-hidden="true">
+            <span class="mission-glow glow-one"></span>
+            <span class="mission-glow glow-two"></span>
+            <span class="mission-grid"></span>
+            <span class="mission-particles particle-one"></span>
+            <span class="mission-particles particle-two"></span>
           </div>
 
-          <div class="mission-card tilt-card">
-            <div class="mission-scan" aria-hidden="true"></div>
-            <p>
-              Most students figure it out too late.<br>
-See every option before you commit.
-            </p>
+          <div class="section-intro mission-intro">
+            <p class="brand-mini">Kaleon</p>
+            <h2 class="animated-headline" aria-label="There’s a smarter way to navigate college.">
+              <span class="headline-line">
+                <span class="headline-word">There’s</span>
+                <span class="headline-word">a</span>
+                <span class="headline-word">smarter</span>
+              </span>
+              <span class="headline-line">
+                <span class="headline-word">way</span>
+                <span class="headline-word">to</span>
+                <span class="headline-word">navigate</span>
+              </span>
+              <span class="headline-line">
+                <span class="headline-word">college.</span>
+              </span>
+              <span class="headline-sheen" aria-hidden="true"></span>
+            </h2>
+          </div>
+
+          <div class="mission-network mission-slogan" aria-label="Not just choosing a major, understanding every path it opens, every step it takes, every outcome it leads to.">
+            <div class="slogan-structure">
+              <div class="slogan-segment">
+                <span class="slogan-index">01</span>
+                <p><span class="segment-soft segment-soft-block">Not just</span><span class="segment-strong segment-strong-block">CHOOSING A PATH</span></p>
+              </div>
+              <div class="slogan-segment">
+                <span class="slogan-index">02</span>
+                <p><span class="segment-strong segment-strong-block">UNDERSTANDING</span><span class="segment-soft segment-soft-block">where it can take you</span></p>
+              </div>
+              <div class="slogan-segment">
+                <span class="slogan-index">03</span>
+                <p><span class="segment-strong segment-strong-block">SEEING</span><span class="segment-soft segment-soft-block">every step ahead</span></p>
+              </div>
+              <div class="slogan-segment">
+                <span class="slogan-index">04</span>
+                <p><span class="segment-strong segment-strong-block">KNOWING</span><span class="segment-soft segment-soft-block">where it leads</span></p>
+              </div>
+            </div>
           </div>
 
           <div class="cta-block">
-            <p class="join-note">Limited spots available!</p>
-            <p class="join-note"><b>Join early.</b></p>
+            <div class="cta-divider" aria-hidden="true">
+              <span class="divider-line"></span>
+              <span class="divider-pulse"></span>
+            </div>
 
-            <form class="signup-form" id="email-form">
-              <label class="sr-only" for="email">Email address</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                autocomplete="email"
-                required
-              />
-              <button type="submit" id="submit-btn">Sign up</button>
-            </form>
+            <div class="cta-shell">
+              <div class="cta-copy">
+                <p class="build-note">We’re building it now.</p>
+                <p class="join-note">Join early.</p>
+              </div>
 
-            <script>
-              const scriptURL = 'https://script.google.com/macros/s/AKfycbwXHe7CU2AWZJ16xdZ97CA__APS3KufFfeknS6PUqPN_gC_MN_a_4SrVkE2Y4t05k2v/exec';
-              const form = document.querySelector('#email-form');
-              const btn = document.querySelector('#submit-btn');
-
-              form.addEventListener('submit', e => {
-                e.preventDefault();
-                btn.disabled = true;
-                btn.innerText = 'Submitting...';
-
-                fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-                  .then(response => {
-                    if (!response.ok) throw new Error('Request failed');
-                    window.location.href = 'welcome.html';
-                  })
-                  .catch(() => {
-                    alert('Something went wrong. Please try again.');
-                    btn.disabled = false;
-                    btn.innerText = 'Sign up';
-                  });
-              });
-            </script>
-
-          
+              <form class="signup-form">
+                <label class="sr-only" for="first-name">First Name</label>
+                <input
+                  class="name-field"
+                  id="first-name"
+                  name="firstName"
+                  type="text"
+                  placeholder="First Name"
+                  autocomplete="given-name"
+                />
+                <label class="sr-only" for="last-name">Last Name</label>
+                <input
+                  class="name-field"
+                  id="last-name"
+                  name="lastName"
+                  type="text"
+                  placeholder="Last Name"
+                  autocomplete="family-name"
+                />
+                <label class="sr-only" for="email">Email address</label>
+                <input
+                  class="email-field"
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  autocomplete="email"
+                />
+                <button type="submit">Sign up</button>
+              </form>
+            </div>
           </div>
         </div>
       </section>
