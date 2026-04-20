@@ -79,9 +79,9 @@
 
           <div class="section-intro mission-intro">
             <p class="brand-mini">Kaleon</p>
-            <h2 class="animated-headline" aria-label="There’s a smarter way to navigate college.">
+            <h2 class="animated-headline" aria-label="There's a smarter way to navigate college.">
               <span class="headline-line">
-                <span class="headline-word">There’s</span>
+                <span class="headline-word">There's</span>
                 <span class="headline-word">a</span>
                 <span class="headline-word">smarter</span>
               </span>
@@ -126,11 +126,11 @@
 
             <div class="cta-shell">
               <div class="cta-copy">
-                <p class="build-note">We’re building it now.</p>
+                <p class="build-note">We're building it now.</p>
                 <p class="join-note">Join early.</p>
               </div>
 
-              <form class="signup-form">
+              <form class="signup-form" id="signup-form">
                 <label class="sr-only" for="first-name">First Name</label>
                 <input
                   class="name-field"
@@ -158,9 +158,45 @@
                   placeholder="Enter your email"
                   autocomplete="email"
                 />
-                <button type="submit">Sign up</button>
+                <button type="submit" id="submit-btn">Sign up</button>
               </form>
+
+
+              <script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbxOqC5v6wBHg9amHtPEhJylEnOhhU_jRZnDqdCIz1fw4rpE6mpvUJRCc4tsWTLJzK3E/exec';
+  const form = document.querySelector('#signup-form');
+  const btn = document.querySelector('#submit-btn');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.innerText = 'Submitting...';
+fetch(scriptURL, {
+  redirect: "follow",
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify({
+    firstName: document.getElementById('first-name').value,
+    lastName: document.getElementById('last-name').value,
+    email: document.getElementById('email').value
+  }),
+  headers: {
+    "Content-Type": "text/plain;charset=utf-8",
+    "Access-Control-Allow-Origin": "*"
+  },
+})
+.then(() => {
+  window.location.href = 'welcome.html';
+})
+.catch(error => {
+  alert('Error: ' + error.message);
+  btn.disabled = false;
+  btn.innerText = 'Sign up';
+});
+  });
+</script>
             </div>
+          
           </div>
         </div>
       </section>
