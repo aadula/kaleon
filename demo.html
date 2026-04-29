@@ -141,6 +141,34 @@
         color: rgba(212, 224, 255, 0.8);
         font-size: 0.94rem;
       }
+
+      .field-label {
+        display: block;
+        margin: 0 0 0.5rem;
+        color: rgba(236, 241, 255, 0.9);
+        font-weight: 600;
+      }
+
+      .input-control {
+        width: min(380px, 100%);
+        border: 1px solid rgba(163, 186, 255, 0.36);
+        border-radius: 0.7rem;
+        background: rgba(90, 120, 255, 0.14);
+        color: #f7f9ff;
+        padding: 0.62rem 0.72rem;
+        font: 500 0.95rem "Space Grotesk", sans-serif;
+      }
+
+      .input-control::file-selector-button {
+        margin-right: 0.6rem;
+        border: 1px solid rgba(163, 186, 255, 0.5);
+        border-radius: 999px;
+        background: rgba(112, 138, 255, 0.28);
+        color: #f7f9ff;
+        padding: 0.35rem 0.7rem;
+        font: 600 0.82rem "Space Grotesk", sans-serif;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -179,21 +207,63 @@
           </p>
 
           <div class="question-block">
-            <p class="question-label">What year are you in?</p>
-            <div class="choice-row">
-              <button class="choice-btn" type="button">1st year</button>
-              <button class="choice-btn" type="button">2nd year</button>
-              <button class="choice-btn" type="button">3rd year</button>
-              <button class="choice-btn" type="button">4th+ year</button>
-            </div>
-          </div>
-
-          <div class="question-block">
             <p class="question-label">Are you a transfer student?</p>
             <div class="choice-row">
               <button class="choice-btn" type="button">Yes</button>
               <button class="choice-btn" type="button">No</button>
             </div>
+          </div>
+
+          <div class="question-block">
+            <label class="field-label" for="school-input">Select your school</label>
+            <select class="input-control" id="school-input">
+              <option value="">Choose your school...</option>
+              <option value="community-college">Community College</option>
+              <option value="state-university">State University</option>
+              <option value="private-university">Private University</option>
+              <option value="out-of-state">Out-of-state School</option>
+            </select>
+          </div>
+
+          <div class="question-block">
+            <label class="field-label" for="major-input">Select your major</label>
+            <select class="input-control" id="major-input">
+              <option value="">Choose your major...</option>
+              <option value="computer-science">Computer Science</option>
+              <option value="business">Business</option>
+              <option value="psychology">Psychology</option>
+              <option value="biology">Biology</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="question-block">
+            <label class="field-label" for="term-style">Term style</label>
+            <select class="input-control" id="term-style">
+              <option value="">Choose a term style...</option>
+              <option value="semester">Semester</option>
+              <option value="trimester">Trimester</option>
+              <option value="quad">Quad</option>
+            </select>
+            <p class="progress-note" id="term-window"></p>
+          </div>
+
+          <div class="question-block">
+            <label class="field-label" for="transcript-file">
+              Upload transcript (PDF/JPG)
+            </label>
+            <input
+              class="input-control"
+              id="transcript-file"
+              type="file"
+              accept=".pdf,.jpg,.jpeg"
+            />
+            <div class="choice-row">
+              <button class="choice-btn" id="scan-btn" type="button">
+                Scan Transcript
+              </button>
+            </div>
+            <p class="progress-note" id="scan-status"></p>
           </div>
 
           <div class="question-block">
@@ -224,6 +294,21 @@
       const readyYes = document.getElementById("ready-yes");
       const readyNo = document.getElementById("ready-no");
       const readinessOutput = document.getElementById("readiness-output");
+      const termStyle = document.getElementById("term-style");
+      const termWindow = document.getElementById("term-window");
+      const transcriptFile = document.getElementById("transcript-file");
+      const scanBtn = document.getElementById("scan-btn");
+      const scanStatus = document.getElementById("scan-status");
+      let fakeScanTimer = null;
+
+      const termWindows = {
+        semester:
+          "Instruction months: Fall (Aug-Dec) and Spring (Jan-May), with optional Summer (Jun-Aug).",
+        trimester:
+          "Instruction months: Fall (Sep-Dec), Winter (Jan-Mar), Spring/Summer (Apr-Aug).",
+        quad:
+          "Instruction months: Fall (Sep-Nov), Winter (Dec-Feb), Spring (Mar-May), Summer (Jun-Aug).",
+      };
 
       window.setTimeout(() => {
         introStep.classList.remove("active");
@@ -247,6 +332,33 @@
       readyNo.addEventListener("click", () => {
         readinessOutput.textContent =
           "Readiness score: assess this, then use existing coursework inputs.";
+      });
+
+      termStyle.addEventListener("change", () => {
+        const selectedTermStyle = termStyle.value;
+        termWindow.textContent = termWindows[selectedTermStyle] || "";
+      });
+
+      scanBtn.addEventListener("click", () => {
+        const selectedFile = transcriptFile.files[0];
+        if (!selectedFile) {
+          scanStatus.textContent = "Please upload a PDF or JPG transcript before scanning.";
+          return;
+        }
+
+        if (fakeScanTimer) {
+          window.clearTimeout(fakeScanTimer);
+        }
+
+        scanStatus.textContent = "Scanning transcript... this fake scan takes 5 seconds.";
+        scanBtn.disabled = true;
+
+        fakeScanTimer = window.setTimeout(() => {
+          scanStatus.textContent =
+            "Scan complete. Transcript captured (placeholder until AI scanner is connected).";
+          scanBtn.disabled = false;
+          fakeScanTimer = null;
+        }, 5000);
       });
     </script>
   </body>
