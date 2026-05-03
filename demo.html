@@ -299,8 +299,7 @@
       const transcriptFile = document.getElementById("transcript-file");
       const scanBtn = document.getElementById("scan-btn");
       const scanStatus = document.getElementById("scan-status");
-      const scanEndpoint =
-        window.location.port === "3010" ? "/scan" : "http://127.0.0.1:3010/scan";
+      const scanEndpoint = window.location.port === "3010" ? "/scan" : "http://127.0.0.1:3010/scan";
       let fakeScanTimer = null;
 
       const termWindows = {
