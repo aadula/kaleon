@@ -1,8 +1,10 @@
 from flask import Flask, request, send_from_directory, make_response
 import subprocess
 import os
+import sys
 import uuid
 import shutil
+from typing import Optional
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -73,7 +75,7 @@ def scan():
         base_args = [
             input_in_ram, 
             "--output_dir", workdir, 
-            "--force_ocr",                # Forces fresh OCR pass
+            "--disable_ocr",                # Forces fresh OCR pass
             "--strip_existing_ocr",       # Cleans up messy PDF text layers
             "--html_tables_in_markdown",  # Better for transcript rows
             # "--use_llm", # Understands transcript layout
@@ -84,12 +86,18 @@ def scan():
         # On Windows, you might need to call this through 'python -m' 
         # if the binary isn't in your direct PATH
                 
-        if os.name == 'nt':
+        if os.name == "nt":
             marker_exe = "marker_single.exe"
             if shutil.which(marker_exe):
                 marker_command = [marker_exe] + base_args
             else:
                 marker_command = ["python", "-m", "marker.convert_single"] + base_args
+        elif sys.platform == "darwin":
+            # macOS: prefer MARKER_BINARY on PATH, else same interpreter as this server (venv-safe).
+            if shutil.which(MARKER_BINARY):
+                marker_command = [MARKER_BINARY] + base_args
+            else:
+                marker_command = [sys.executable, "-m", "marker.convert_single"] + base_args
         else:
             # Raspberry Pi / Linux logic
             # You can explicitly point to /usr/bin/python3 to escape the venv
@@ -134,6 +142,47 @@ def scan():
             os.remove(path)
         if workdir and os.path.exists(workdir):
             shutil.rmtree(workdir)
+
+
+def _delegate_to_platform_launcher() -> Optional[int]:
+    """Windows → PowerShell launcher (NVIDIA/GPU host setup); macOS → bash launcher.
+
+    Set MARKER_SERVER_NO_DELEGATE=1 (done by the scripts) to run Flask directly.
+    """
+    if os.environ.get("MARKER_SERVER_NO_DELEGATE"):
+        return None
+
+    if os.name == "nt":
+        ps1 = os.path.join(APP_ROOT, "run_marker_server_win.ps1")
+        if not os.path.isfile(ps1):
+            return None
+        completed = subprocess.run(
+            [
+                "powershell.exe",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                ps1,
+            ],
+            cwd=APP_ROOT,
+        )
+        return completed.returncode
+
+    if sys.platform == "darwin":
+        sh = os.path.join(APP_ROOT, "run_marker_server_mac.sh")
+        if not os.path.isfile(sh):
+            return None
+        completed = subprocess.run(["/bin/bash", sh], cwd=APP_ROOT)
+        return completed.returncode
+
+    return None
+
+
 if __name__ == "__main__":
+    delegated = _delegate_to_platform_launcher()
+    if delegated is not None:
+        sys.exit(delegated)
+
     port = int(os.environ.get("PORT", "3010"))
     app.run(host="0.0.0.0", port=port, debug=True)
