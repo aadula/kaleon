@@ -250,17 +250,17 @@
 
           <div class="question-block">
             <label class="field-label" for="transcript-file">
-              Upload transcript (PDF/JPG)
+              Upload transcript (PDF or image — scan starts automatically)
             </label>
             <input
               class="input-control"
               id="transcript-file"
               type="file"
-              accept=".pdf,.jpg,.jpeg"
+              accept=".pdf,.jpg,.jpeg,.png"
             />
             <div class="choice-row">
               <button class="choice-btn" id="scan-btn" type="button">
-                Scan Transcript
+                Scan again
               </button>
             </div>
             <p class="progress-note" id="scan-status"></p>
@@ -300,7 +300,6 @@
       const scanBtn = document.getElementById("scan-btn");
       const scanStatus = document.getElementById("scan-status");
       const scanEndpoint = window.location.port === "3010" ? "/scan" : "http://127.0.0.1:3010/scan";
-      let fakeScanTimer = null;
 
       const termWindows = {
         semester:
@@ -340,23 +339,31 @@
         termWindow.textContent = termWindows[selectedTermStyle] || "";
       });
 
-      scanBtn.addEventListener("click", async () => {
+      let scanAbort = null;
+
+      const runScanFromInput = async () => {
         const file = transcriptFile.files[0];
 
         if (!file) {
-          scanStatus.textContent = "Please upload a PDF or JPG transcript before scanning.";
+          scanStatus.textContent = "Please upload a PDF or image transcript.";
           return;
         }
+
+        if (scanAbort) {
+          scanAbort.abort();
+        }
+        scanAbort = new AbortController();
 
         const formData = new FormData();
         formData.append("file", file);
 
-        scanStatus.textContent = "Scanning...";
+        scanStatus.textContent = "Uploading and scanning…";
 
         try {
           const res = await fetch(scanEndpoint, {
             method: "POST",
-            body: formData
+            body: formData,
+            signal: scanAbort.signal,
           });
 
           if (!res.ok) {
@@ -367,11 +374,23 @@
 
           const output = await res.text();
           scanStatus.textContent = output;
-
         } catch (e) {
+          if (e.name === "AbortError") {
+            return;
+          }
           scanStatus.textContent = `Request failed: ${e.message || e}`;
           console.error(e);
         }
+      };
+
+      // Chandra runs on the server as soon as `/scan` receives the file — start that request when a file is chosen.
+      transcriptFile.addEventListener("change", () => {
+        scanStatus.textContent = "";
+        void runScanFromInput();
+      });
+
+      scanBtn.addEventListener("click", () => {
+        void runScanFromInput();
       });
     </script>
   </body>

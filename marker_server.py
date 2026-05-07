@@ -10,9 +10,10 @@ from typing import Optional
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, static_folder=None)
 UPLOAD_FOLDER = os.path.join(APP_ROOT, "uploads")
-MARKER_BINARY = os.environ.get("MARKER_BINARY", "marker_single")
-# OCR on large PDFs can run a long time; override with MARKER_TIMEOUT (seconds).
-MARKER_TIMEOUT = int(os.environ.get("MARKER_TIMEOUT", "3600"))
+CHANDRA_BINARY = os.environ.get("CHANDRA_BINARY", "chandra")
+CHANDRA_METHOD = os.environ.get("CHANDRA_METHOD", "hf")
+# OCR on large PDFs/images can run a long time; override with CHANDRA_TIMEOUT (seconds).
+CHANDRA_TIMEOUT = int(os.environ.get("CHANDRA_TIMEOUT", "3600"))
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -43,6 +44,7 @@ def add_cors_headers(response):
 
 @app.route('/scan', methods=['POST', 'OPTIONS'])
 def scan():
+    """Accept an uploaded PDF/image; save it, run Chandra once, return markdown."""
     if request.method == "OPTIONS":
         return make_response("", 204)
 
@@ -57,69 +59,45 @@ def scan():
     path = os.path.join(UPLOAD_FOLDER, filename)
     file.save(path)
 
-    workdir = None 
+    workdir = None
 
     try:
-        # 1. Setup Workspace
+        # 1. Setup workspace.
         ram_disk = "/dev/shm" if os.path.exists("/dev/shm") else UPLOAD_FOLDER
         workdir = os.path.join(ram_disk, str(uuid.uuid4()))
         os.makedirs(workdir, exist_ok=True)
 
-        # 2. Move to RAM
-        input_in_ram = os.path.join(workdir, "input.pdf")
+        # 2. Move input to working dir.
+        original_ext = os.path.splitext(file.filename)[1].lower() or ".pdf"
+        input_in_ram = os.path.join(workdir, f"input{original_ext}")
         shutil.copy(path, input_in_ram)
 
-        # 3. Define High-Accuracy Marker Command
-        # This list adds the specific flags for complex transcripts
+        # 3. Run Chandra as soon as this upload is on disk (same request; no separate queue).
+        # Chandra expects: chandra <input_file_or_dir> <output_dir> [flags]
+        base_args = [input_in_ram, workdir, "--method", CHANDRA_METHOD]
 
-        base_args = [
-            input_in_ram, 
-            "--output_dir", workdir, 
-            "--disable_ocr",                # Forces fresh OCR pass
-            "--strip_existing_ocr",       # Cleans up messy PDF text layers
-            "--html_tables_in_markdown",  # Better for transcript rows
-            # "--use_llm", # Understands transcript layout
-            "--highres_image_dpi", "300", # Better for small course codes
-            "--add_block_ids"             # Helps identify specific data blocks
-        ]
-
-        # On Windows, you might need to call this through 'python -m' 
-        # if the binary isn't in your direct PATH
-                
-        if os.name == "nt":
-            marker_exe = "marker_single.exe"
-            if shutil.which(marker_exe):
-                marker_command = [marker_exe] + base_args
-            else:
-                marker_command = ["python", "-m", "marker.convert_single"] + base_args
-        elif sys.platform == "darwin":
-            # macOS: prefer MARKER_BINARY on PATH, else same interpreter as this server (venv-safe).
-            if shutil.which(MARKER_BINARY):
-                marker_command = [MARKER_BINARY] + base_args
-            else:
-                marker_command = [sys.executable, "-m", "marker.convert_single"] + base_args
+        if shutil.which(CHANDRA_BINARY):
+            chandra_command = [CHANDRA_BINARY] + base_args
         else:
-            # Raspberry Pi / Linux logic
-            # You can explicitly point to /usr/bin/python3 to escape the venv
-            marker_command = ["/usr/bin/python3", "-m", "marker.convert_single"] + base_args
-
+            # Fallback for environments where console script is unavailable.
+            chandra_command = [sys.executable, "-m", "chandra.cli.main"] + base_args
 
         result = subprocess.run(
-            marker_command,
+            chandra_command,
             capture_output=True,
             text=True,
-            timeout=MARKER_TIMEOUT,
+            timeout=CHANDRA_TIMEOUT,
         )
 
         if result.returncode != 0:
-            return f"Marker error: {result.stderr or result.stdout}", 500
+            return f"Chandra error: {result.stderr or result.stdout}", 500
 
-        # 4. Find and Read the generated .md file
+        # 4. Find and read the generated markdown output.
         md_content = "Scan complete, but no text was extracted."
         for root, dirs, files in os.walk(workdir):
             for f in files:
                 if f.endswith(".md"):
-                    # Using utf-8-sig handles Windows/Linux encoding variations
+                    # utf-8-sig handles Windows/Linux encoding variations.
                     with open(os.path.join(root, f), "r", encoding="utf-8-sig") as md_file:
                         md_content = md_file.read()
                     break
@@ -130,8 +108,8 @@ def scan():
 
     except subprocess.TimeoutExpired as e:
         return (
-            f"Marker timed out after {e.timeout} seconds. "
-            "Increase MARKER_TIMEOUT (seconds) or use a smaller PDF / fewer pages.",
+            f"Chandra timed out after {e.timeout} seconds. "
+            "Increase CHANDRA_TIMEOUT (seconds) or use a smaller file / fewer pages.",
             504,
         )
     except Exception as e:
@@ -145,15 +123,18 @@ def scan():
 
 
 def _delegate_to_platform_launcher() -> Optional[int]:
-    """Windows → PowerShell launcher (NVIDIA/GPU host setup); macOS → bash launcher.
+    """Windows -> PowerShell launcher; macOS -> bash launcher.
 
-    Set MARKER_SERVER_NO_DELEGATE=1 (done by the scripts) to run Flask directly.
+    Set CHANDRA_SERVER_NO_DELEGATE=1 (done by the scripts) to run Flask directly.
     """
-    if os.environ.get("MARKER_SERVER_NO_DELEGATE"):
+    if os.environ.get("CHANDRA_SERVER_NO_DELEGATE"):
         return None
 
     if os.name == "nt":
-        ps1 = os.path.join(APP_ROOT, "run_marker_server_win.ps1")
+        ps1 = os.path.join(APP_ROOT, "run_chandra_server_win.ps1")
+        if not os.path.isfile(ps1):
+            # Backward compatibility with existing script names.
+            ps1 = os.path.join(APP_ROOT, "run_marker_server_win.ps1")
         if not os.path.isfile(ps1):
             return None
         completed = subprocess.run(
@@ -170,7 +151,10 @@ def _delegate_to_platform_launcher() -> Optional[int]:
         return completed.returncode
 
     if sys.platform == "darwin":
-        sh = os.path.join(APP_ROOT, "run_marker_server_mac.sh")
+        sh = os.path.join(APP_ROOT, "run_chandra_server_mac.sh")
+        if not os.path.isfile(sh):
+            # Backward compatibility with existing script names.
+            sh = os.path.join(APP_ROOT, "run_marker_server_mac.sh")
         if not os.path.isfile(sh):
             return None
         completed = subprocess.run(["/bin/bash", sh], cwd=APP_ROOT)
